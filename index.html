@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таймер обратного отсчета</title>
+    <!-- Подключаем Tailwind CSS для стилизации -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключаем шрифт Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Применяем шрифт ко всему документу */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <!-- Основной контейнер таймера -->
+        <div class="text-center">
+            <h1 class="text-3xl md:text-5xl font-bold text-gray-300 mb-4">До события осталось</h1>
+            
+            <!-- Блок для отображения часов -->
+            <div class="bg-gray-800 rounded-2xl p-8 shadow-2xl">
+                <span id="hours" class="text-7xl md:text-9xl font-black text-emerald-400 tracking-tighter">0</span>
+                <p class="text-xl md:text-2xl font-bold text-gray-400 mt-2">часов</p>
+            </div>
+
+            <!-- Отображение целевой даты -->
+            <p id="target-date-display" class="mt-6 text-lg text-gray-500"></p>
+        </div>
+    </div>
+
+    <script>
+        // --- ИЗМЕНИТЕ ДАТУ ЗДЕСЬ ---
+        // Укажите дату в формате: "Месяц День, Год Часы:Минуты:Секунды"
+        // Например: "January 1, 2025 00:00:00"
+        const targetDate = new Date("June 15, 2025 20:00:00").getTime();
+        
+        // Получаем элементы для отображения данных
+        const hoursElement = document.getElementById('hours');
+        const targetDateElement = document.getElementById('target-date-display');
+
+        // Функция для форматирования даты для отображения
+        function formatTargetDate(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString('ru-RU', options);
+        }
+
+        // Отображаем целевую дату на странице
+        targetDateElement.innerText = `Цель: ${formatTargetDate(targetDate)}`;
+
+        // Функция для обновления таймера
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            // Если время вышло
+            if (difference < 0) {
+                clearInterval(interval);
+                hoursElement.innerText = "0";
+                document.querySelector('h1').innerText = "Событие наступило!";
+                return;
+            }
+
+            // Рассчитываем общее количество оставшихся часов
+            const hours = Math.floor(difference / (1000 * 60 * 60));
+
+            // Обновляем текст на странице
+            hoursElement.innerText = hours;
+        };
+        
+        // Запускаем обновление таймера каждую секунду
+        const interval = setInterval(updateCountdown, 1000);
+
+        // Вызываем функцию один раз при загрузке, чтобы избежать задержки
+        updateCountdown();
+    </script>
+
+</body>
+</html>
